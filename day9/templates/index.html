@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Nomad News | {{ mode }}</title>
+	<link href="https://andybrewer.github.io/mvp/mvp.css" rel="stylesheet">
+	</link>
+</head>
+
+<body>
+	<header>
+		<h1>Nomad News</h1>
+		<div>
+			<span>Order by : </span>
+            {% if mode == 'Popular' %}
+            <strong>
+                Popular
+            </strong>
+            <span>|</span>
+            <a href={{ url_for( "hello", mode="New" ) }}>
+                New
+            </a>
+            {% elif mode == "New" %}
+            <a href={{ url_for( "hello", mode="Popular" ) }}>
+                Popular
+            </a>
+            <span> | </span>
+            <strong>
+                New
+            </strong>
+            {% endif %}
+        </div>
+    </header>
+    <main>
+        {% for n in news %}
+        <div>
+            <div>
+              <a href= {{ url_for('detail',info_id=n.objectID) }}>
+                <h3>{{ n.title }}</h3>
+              </a>
+                <div>
+                    ( <a href="{{ n.url }}" target="_blank">{{ n.url }}</a> )
+                </div>
+            </div>
+            <div>
+                <span>{{ n.points }} points | </span>
+                <span>By {{ n.author }} | </span>
+                <span>{{ n.num_comments }} comments</span>
+            </div>
+        </div>
+        <hr/>
+        {% endfor %}
+    </main>
+</body>
+
+</html>
