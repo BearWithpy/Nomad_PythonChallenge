@@ -20,7 +20,7 @@ To make a request, use this url:
 https://www.reddit.com/r/{subreddit}/top/?t=month
 This will give you the top posts in per month.
 """
-# jason
+
 subreddits = [
     "javascript",
     "reactjs",
@@ -44,6 +44,7 @@ def check():
 @app.route("/read")
 def read():
     subs = list(request.args)
+    result = []
 
     for sub in subs:
         url = f"https://www.reddit.com/r/{sub}/top/?t=month"
@@ -51,8 +52,21 @@ def read():
         soup = BeautifulSoup(response.text, "html.parser")
         posts = soup.find_all("div", {"class": "Post"})
 
-    print(posts)
-    return render_template("read.html", subs=subs)
+        for post in posts:
+            title = post.find("h3").get_text()
+            url = post.find("a", {"class": "_3jOxDPIQ0KaOWpzvSQo-1s"}).get("href")
+            upvote = post.find("div", {"class": "_1rZYMD_4xY3gRcSS3p8ODO"}).get_text()
+            if upvote == "•":
+                continue
+            if "k" in upvote:
+                upvote = int(eval(upvote.replace("k", "")) * 1000)
+
+            info = {"title": title, "url": url, "upvote": int(upvote), "sub": sub}
+            result.append(info)
+
+        result.sort(key=lambda x: x["upvote"], reverse=True)
+
+    return render_template("read.html", subs=subs, result=result)
 
 
-app.run(host="0.0.0.0")
+app.run(host="0.0.0.0", port=7000)
