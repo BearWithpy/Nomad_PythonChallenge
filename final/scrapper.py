@@ -101,3 +101,6 @@ def scrape_remoteok(term):
             result.append(job_dict)
 
     return result
+
+
+# 20200728
